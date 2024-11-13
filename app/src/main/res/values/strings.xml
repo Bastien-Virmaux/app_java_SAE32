@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Projet_SAE32</string>
+    <string name="input">Entrer un message...</string>
+    <string name="titre">Twitter - SAE32</string>
+    <string name="statusMessage">Aucun Message</string>
+</resources>
