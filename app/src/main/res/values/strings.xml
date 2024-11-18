@@ -3,4 +3,9 @@
     <string name="input">Entrer un message...</string>
     <string name="titre">Twitter - SAE32</string>
     <string name="statusMessage">Aucun Message</string>
+    <string name="nexus">Nexus</string>
+    <string name="crire_un_message">Écrire un message....</string>
+    <string name="pseudoMessage">Doe John</string>
+    <string name="dateMessage">15/11/10 à 11h00</string>
+    <string name="likeMessage">0</string>
 </resources>

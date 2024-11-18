@@ -1,11 +1,8 @@
 package com.example.projet_sae32;
 
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -13,15 +10,26 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
+import com.example.projet_sae32.adapter.MessageAdapter;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
+    private RecyclerView recyclerView;
+    private MessageAdapter messageAdapter;
+
+    TextView _textMessage;
+    TextView _dateMessage;
+    RecyclerView _recyclerView;
+
     Button _btnSend;
     EditText _inpSend;
-    TextView _viewMessage;
-    LinearLayout _messageContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,18 +42,52 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        _btnSend = (Button) findViewById(R.id.btnSend); //action send
-        _inpSend = (EditText) findViewById(R.id.inpSend); //content
-        _messageContainer = (LinearLayout) findViewById(R.id.messageContainer);
+        // Initialisez le RecyclerView ici
+        recyclerView = findViewById(R.id.recyclerView);
 
-        Message message = new Message(this, _inpSend, _btnSend, _messageContainer);
+        _btnSend = findViewById(R.id.btnSend);
+        _inpSend = findViewById(R.id.inpSend);
 
-        _btnSend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                message.sendMessage();
-                message.showMessage();
-            }
-        });
+        _textMessage = findViewById(R.id.textMessage);
+        _dateMessage = findViewById(R.id.dateMessage);
+
+        // Configuration du RecyclerView
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+
+        // Initialisation de l'adapter
+        messageAdapter = new MessageAdapter(this);
+        recyclerView.setAdapter(messageAdapter);
+
+        _btnSend.setOnClickListener(v -> envoyerMessage());
+    }
+
+    private void envoyerMessage(){
+        //récupérer le texte du message
+        String messageTexte = _inpSend.getText().toString().trim();
+
+        // Vérifier que le message n'est pas vide
+        if (!messageTexte.isEmpty()) {
+            // Obtenir l'heure actuelle
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            String heureActuelle = sdf.format(new Date());
+
+            // Créer un nouveau message
+            Message nouveauMessage = new Message("Moi", messageTexte, heureActuelle);
+
+            // Ajouter le message à l'adaptateur
+            messageAdapter.addMessage(nouveauMessage);
+
+            // Effacer le champ de texte
+            _inpSend.setText("");
+
+            // Défiler jusqu'au dernier message
+            recyclerView.scrollToPosition(messageAdapter.getItemCount() - 1);
+        }
+    }
+
+    private void ajouterMessagesTest() {
+        messageAdapter.addMessage(new Message("test", "test", "10:30"));
+        messageAdapter.addMessage(new Message("User2", "Moi aussi ! On devrait y aller ensemble.", "10:32"));
     }
 }
