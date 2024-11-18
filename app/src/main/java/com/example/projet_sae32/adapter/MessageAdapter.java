@@ -30,6 +30,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         notifyItemInserted(messages.size() - 1);
     }
 
+    public void clearMessages() {
+        messages.clear();
+        notifyDataSetChanged();
+    }
+
     @NonNull
     @Override
     public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
