@@ -21,7 +21,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
@@ -43,7 +46,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         /* ===A NE PAS TOUCHER=== */
         super.onCreate(savedInstanceState);
+        //====
         FirebaseApp.initializeApp(this); //initialisation de Firebase
+        //====
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -129,7 +134,8 @@ public class MainActivity extends AppCompatActivity {
                         for (DocumentSnapshot doc : value.getDocuments()) {
                             Message message = new Message(
                                     doc.getString("pseudo"),
-                                    doc.getString("content")
+                                    doc.getString("content"),
+                                    doc.getString("date")
                             );
                             messageAdapter.addMessage(message);
                         }
@@ -141,7 +147,11 @@ public class MainActivity extends AppCompatActivity {
     private void envoyerMessage() {
         String messageTexte = _inpSend.getText().toString().trim();
         if (!messageTexte.isEmpty()) {
-            Message nouveauMessage = new Message("Anonyme", messageTexte);
+            // Obtenir l'heure actuelle
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+            String date = sdf.format(new Date());
+
+            Message nouveauMessage = new Message("Anonyme", messageTexte, date);
             sendMessage(nouveauMessage);
             _inpSend.setText("");
         }

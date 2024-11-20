@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <!-- MESSAGE -->
@@ -13,7 +13,8 @@
         android:padding="16dp"
         android:layout_margin="16dp"
         android:background="@drawable/nexus_footer_container"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent">
 
         <!-- HEADER MESSAGE -->
         <LinearLayout

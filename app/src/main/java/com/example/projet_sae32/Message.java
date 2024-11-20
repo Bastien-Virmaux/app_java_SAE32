@@ -10,13 +10,10 @@ public class Message {
     private String date;
     private int likes;
 
-    public Message(String pseudo, String content) {
-        // Obtenir l'heure actuelle
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
-        this.date = sdf.format(new Date());
-
+    public Message(String pseudo, String content, String date) {
         this.pseudo = pseudo;
         this.content = content;
+        this.date = date;
         this.likes = 0;
     }
 
