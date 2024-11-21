@@ -28,27 +28,22 @@ import java.util.Locale;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
-    //définition des attributs
-    private RecyclerView recyclerView; //ATTRIBUT : recyclerview qui va contenir les messages
-    private MessageAdapter messageAdapter; //ATTRIBUT : messageAdapter qui va gérer les messages
-    private FirebaseFirestore db; //ATTRIBUT : db qui va gérer la base de données
-    private ListenerRegistration messagesListener; //ATTRIBUT : messagesListener qui va gérer les messages
+    private RecyclerView recyclerView;
+    private MessageAdapter messageAdapter;
+    private FirebaseFirestore db;
+    private ListenerRegistration messagesListener;
 
-    //définition des vues
-    TextView _textMessage; //VUE : texte du message
-    TextView _dateMessage; //VUE : date du message
+    TextView _textMessage;
+    TextView _dateMessage;
 
-    //définition des boutons et champs de texte
-    Button _btnSend; //ACTION : bouton d'envoi de message
-    EditText _inpSend; //ACTION : champ de texte d'envoi de message
+    Button _btnSend;
+    EditText _inpSend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        /* ===A NE PAS TOUCHER=== */
         super.onCreate(savedInstanceState);
-        //====
-        FirebaseApp.initializeApp(this); //initialisation de Firebase
-        //====
+        FirebaseApp.initializeApp(this);
+
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -56,10 +51,9 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        /* ===FIN A NE PAS TOUCHER=== */
 
         // Initialisation de Firestore
-        db = FirebaseFirestore.getInstance(); //récupération de la base de données
+        db = FirebaseFirestore.getInstance();
 
         // Setup des vues
         setupViews();
@@ -71,55 +65,40 @@ public class MainActivity extends AppCompatActivity {
         startListeningToMessages();
 
         // Ajouter un listener au bouton d'envoi de message
-        _btnSend.setOnClickListener(v -> envoyerMessage()); //action du bouton d'envoi de message
+        _btnSend.setOnClickListener(v -> envoyerMessage());
     }
 
-    /**
-     * Permet d'initialiser les différentes vues
-     */
     private void setupViews() {
-        recyclerView = findViewById(R.id.recyclerView); //récupération du recyclerview
-        _btnSend = findViewById(R.id.btnSend); //récupération du bouton d'envoi de message
-        _inpSend = findViewById(R.id.inpSend); //récupération du champ de texte d'envoi de message
-        _textMessage = findViewById(R.id.textMessage); //récupération du champ texte du message
-        _dateMessage = findViewById(R.id.dateMessage); //récupération du champ date du message
+        recyclerView = findViewById(R.id.recyclerView);
+        _btnSend = findViewById(R.id.btnSend);
+        _inpSend = findViewById(R.id.inpSend);
+        _textMessage = findViewById(R.id.textMessage);
+        _dateMessage = findViewById(R.id.dateMessage);
     }
 
-    /**
-     * Permet d'initialiser le recyclerView
-     */
     private void setupRecyclerView() {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this); //récupération du layout manager => le layout manager est un composant qui gère la disposition des éléments dans un RecyclerView
-        recyclerView.setLayoutManager(layoutManager); //on définit le layout manager du recyclerview
-        messageAdapter = new MessageAdapter(this); //récupération du messageAdapter => le messageAdapter est un composant qui gère les messages
-        recyclerView.setAdapter(messageAdapter); //permet d'indiquer que le récyclerView à comme adapter messageAdapter
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        messageAdapter = new MessageAdapter(this);
+        recyclerView.setAdapter(messageAdapter);
     }
 
-    /**
-     * Permet d'enrigistrer les message dans la base de données.
-     * @param mess = prend en paramétre un objet Message
-     */
     private void sendMessage(Message mess) {
-        //enregistrement des messages dans une MAP
-        Map<String, Object> message = new HashMap<>(); //récupération de la map des messages c'est-à-dire un objet qui permet de stocker des données
-        message.put("pseudo", mess.getPseudo()); //on ajoute le pseudo du message dans la map
-        message.put("content", mess.getContent()); //on ajoute le contenu du message dans la map
-        message.put("date", mess.getDate()); //on ajoute la date du message dans la map
+        Map<String, Object> message = new HashMap<>();
+        message.put("pseudo", mess.getPseudo());
+        message.put("content", mess.getContent());
+        message.put("date", mess.getDate());
 
-        //enregistrement des messages dans Firestore
-        db.collection("messages") //on récupère la collection messages
-                .add(message) //on ajoute le message dans la collection messages
-                .addOnSuccessListener(documentReference -> { //Permet d'indiquer que l'ajout à réussie
+        db.collection("messages")
+                .add(message)
+                .addOnSuccessListener(documentReference -> {
                     Log.d("Firestore", "Message added with ID: " + documentReference.getId());
                 })
-                .addOnFailureListener(e -> { //Permet d'indiquer que l'ajout à échoué
+                .addOnFailureListener(e -> {
                     Log.e("Firestore", "Error adding message", e);
                 });
     }
 
-    /**
-     * Permet de récupérer & afficher les messages dans le recyclerView
-     */
     private void startListeningToMessages() {
         messagesListener = db.collection("messages")
                 .orderBy("date", Query.Direction.ASCENDING)

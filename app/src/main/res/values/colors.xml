@@ -1,8 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="color_bg">#07141d</color>
-    <color name="color_bg1">#1b2730</color>
-    <color name="color_bg2">#28353e</color>
-    <color name="color_text">#acb5ba</color>
-    <color name="color_white">#FFFFFF</color>
+
+    <!-- ==COLOR PRIMAIRE== -->
+    <color name="P500">#68B5F7</color>
+    <color name="P400">#7DBDF8</color>
+    <color name="P300">#90C5F9</color>
+    <color name="P200">#A1CDFA</color>
+    <color name="P100">#B2D5FB</color>
+    <color name="P50">#C2DDFC</color>
+
+    <!-- ==COLOR SURFACE== -->
+    <color name="S500">#121212</color>
+    <color name="S400">#282828</color>
+    <color name="S300">#3F3F3F</color>
+    <color name="S200">#575757</color>
+    <color name="S100">#717171</color>
+    <color name="S50">#8B8B8B</color>
+
+    <!-- ==COLOR SURFACE (variante)== -->
+    <color name="SV500">#1C2025</color>
+    <color name="SV400">#313539</color>
+    <color name="SV300">#474B4F</color>
+    <color name="SV200">#5F6266</color>
+    <color name="SV100">#777A7E</color>
+    <color name="SV50">#919396</color>
+
+    <!-- COLOR -->
+    <color name="white">#FFFFFF</color>
+
 </resources>

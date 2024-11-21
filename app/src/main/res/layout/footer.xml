@@ -22,8 +22,8 @@
             android:padding="16dp"
             android:background="@drawable/nexus_footer_input"
             android:hint="@string/crire_un_message"
-            android:textColorHint="@color/color_text"
-            android:textColor="@color/color_white"
+            android:textColorHint="@color/white"
+            android:textColor="@color/white"
         />
 
         <Button

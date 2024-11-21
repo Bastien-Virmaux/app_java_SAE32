@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/mainOpen"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/S500">
+
+    <ImageView
+        android:id="@+id/iconPreLogin"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="114dp"
+        android:src="@drawable/logo_nexus"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+    <TextView
+        android:id="@+id/titleSecondPreLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="124dp"
+        android:text="Bienvenue sur Nexus !"
+        app:layout_constraintTop_toBottomOf="@+id/iconPreLogin"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:textColor="@color/P500"/>
+
+    <TextView
+        android:id="@+id/textSecondPreLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="L’application qui rapproche vos équipes. !"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@+id/titleSecondPreLogin"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="74dp"
+        android:padding="8dp"
+        android:background="@drawable/nexus_button_container"
+        app:layout_constraintTop_toBottomOf="@+id/textSecondPreLogin"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+
+        <Button
+            android:id="@+id/login"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="Se connecter"
+            android:textSize="16sp"
+            android:textColor="@color/S500"
+            android:background="@drawable/nexus_button"/>
+
+        <Button
+            android:id="@+id/register"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="S’inscrire"
+            android:textSize="16sp"
+            android:textColor="@color/P50"
+            android:background="@color/S500"/>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

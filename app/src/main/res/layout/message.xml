@@ -43,7 +43,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/pseudoMessage"
                     android:textSize="15sp"
-                    android:textColor="@color/color_white"
+                    android:textColor="@color/white"
                     android:textStyle="bold"/>
 
                 <TextView
@@ -53,7 +53,7 @@
                     android:layout_marginRight="4dp"
                     android:text="·"
                     android:textSize="13sp"
-                    android:textColor="@color/color_text"
+                    android:textColor="@color/S100"
                     />
 
                 <TextView
@@ -62,7 +62,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/dateMessage"
                     android:textSize="13sp"
-                    android:textColor="@color/color_text"/>
+                    android:textColor="@color/S100"/>
 
             </LinearLayout>
 
@@ -76,7 +76,7 @@
             android:layout_marginTop="8dp"
             android:text="Salut j'adore manger Macdo avec mes amies et ma famille."
             android:textSize="15sp"
-            android:textColor="@color/color_white"/>
+            android:textColor="@color/white"/>
 
         <!-- FOOTER MESSAGE -->
         <LinearLayout
@@ -93,8 +93,8 @@
                 android:gravity="center"
                 android:padding="8dp"
                 android:text="@string/likeMessage"
-                android:background="@color/color_bg1"
-                android:textColor="@color/color_text"
+                android:background="@color/S400"
+                android:textColor="@color/S100"
                 />
         </LinearLayout>
             
