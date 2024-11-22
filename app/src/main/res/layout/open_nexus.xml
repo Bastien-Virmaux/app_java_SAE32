@@ -58,6 +58,7 @@
             android:text="Se connecter"
             android:textSize="16sp"
             android:textColor="@color/S500"
+            android:textStyle="bold"
             android:background="@drawable/nexus_button"/>
 
         <Button
@@ -68,6 +69,7 @@
             android:text="S’inscrire"
             android:textSize="16sp"
             android:textColor="@color/P50"
+            android:textStyle="bold"
             android:background="@color/S500"/>
 
     </LinearLayout>

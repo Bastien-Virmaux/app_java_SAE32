@@ -125,12 +125,16 @@ public class MainActivity extends AppCompatActivity {
 
     private void envoyerMessage() {
         String messageTexte = _inpSend.getText().toString().trim();
+
         if (!messageTexte.isEmpty()) {
             // Obtenir l'heure actuelle
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
             String date = sdf.format(new Date());
 
-            Message nouveauMessage = new Message("Anonyme", messageTexte, date);
+            //récupération du pseudo de l'utilisateur actuellement connecté
+            String username = LoginActivity.username;
+
+            Message nouveauMessage = new Message(username, messageTexte, date);
             sendMessage(nouveauMessage);
             _inpSend.setText("");
         }
