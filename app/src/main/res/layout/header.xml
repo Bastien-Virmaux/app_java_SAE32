@@ -9,20 +9,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
+        android:orientation="horizontal"
         tools:layout_editor_absoluteX="124dp"
         tools:layout_editor_absoluteY="0dp"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/logo_nexus"
-            android:layout_width="32dp"
+            android:layout_width="77dp"
             android:layout_height="32dp"
             android:src="@drawable/logo_nexus" />
 
         <TextView
             android:id="@+id/text_nexus"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="@string/nexus"
             android:textAlignment="center"
             android:textColor="@color/white"
@@ -30,6 +32,14 @@
             android:textStyle="bold"
             android:gravity="center" />
 
+        <Button
+            android:id="@+id/refeshButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="refresh" />
     </LinearLayout>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -31,94 +31,125 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
-    private final List<Message> messages;
-    private Context context;
-    private FirebaseFirestore firestoreDb;
-    private String currentUsername;
+// Class pour gérer les messages (trouvé sur internet et adapter à nos besoin)
+public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.setupView> { // extends RecyclerView.Adapter<MessageAdapter.setupView> => adapter pour recycler view (liste)
+    private final List<Message> messages; // Liste des messages
+    private Context context; // Contexte de l'application
+    private FirebaseFirestore firestoreDb; // Firestore pour la base de données
 
-    public MessageAdapter(Context context) {
-        this.context = context;
-        this.messages = new ArrayList<>();
-        this.firestoreDb = FirebaseFirestore.getInstance();
-    }
-    public void addMessage(Message message) {
-        messages.add(message);
-        notifyItemInserted(messages.size() - 1);
-    }
-    public void clearMessages() {
-        messages.clear();
-        notifyDataSetChanged();
-    }
-
+    // Méthode pour créer une vue pour chaque message
     @NonNull
     @Override
-    public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.message, parent, false);
-        return new MessageViewHolder(view);
+    public setupView onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.message, parent, false); // Permet de lier le fichier XML avec la classe message
+        return new setupView(view); // Appel du constructeur de la classe setupView
     }
 
+    // Classe pour gérer les vues de chaque message
+    static class setupView extends RecyclerView.ViewHolder {
+        TextView pseudoMessage; // Pseudo du message
+        TextView dateMessage; // Date du message
+        TextView textMessage; // Contenu du message
+        Button btnLike; // Bouton pour liker le message
+        TextView likeCount; // Nombre de likes du message
+
+        // Constructeur de la classe setupView
+        setupView(View itemView) { // itemView => vue de chaque message
+            super(itemView); // Appel du constructeur de la classe parent RecyclerView.ViewHolder
+            pseudoMessage = itemView.findViewById(R.id.pseudoMessage);
+            dateMessage = itemView.findViewById(R.id.dateMessage);
+            textMessage = itemView.findViewById(R.id.textMessage);
+            btnLike = itemView.findViewById(R.id.btnLike);
+            likeCount = itemView.findViewById(R.id.likeCount);
+        }
+    }
+
+    // Constructeur de la classe MessageAdapter
+    public MessageAdapter(Context context) { // Context => contexte de l'application
+        this.context = context; // Initialisation du contexte
+        this.messages = new ArrayList<>(); // Initialisation de la liste des messages
+        this.firestoreDb = FirebaseFirestore.getInstance(); // Initialisation de Firestore
+    }
+
+    // Méthode pour ajouter un message à la liste
+    public void addMessage(Message message) { // Message => message à ajouter
+        messages.add(message); // Ajout du message à la liste messages de la class MessageAdapter
+    }
+
+    // Méthode pour clear la liste des messages
+    public void clearMessages() {
+        messages.clear(); // Nettoyage de la liste messages de la class MessageAdapter
+    }
+
+    // Méthode pour mettre à jour l'état du bouton en fonction de si l'utilisateur a déjà liké ce message
+    private void updateLikeButtonState(Button likeButton, boolean isLiked) {
+        if (isLiked) { // Si l'utilisateur a déjà liké ce message
+            likeButton.setBackgroundResource(R.drawable.icon_nexus_heart_like); // Changer l'image du bouton en fonction de l'état
+            likeButton.setEnabled(false); // Désactiver le bouton
+        }
+    }
+
+    // Méthode pour liker un message
+    private void likeMessage(Message message, setupView holder) { //setupView holder => vue de chaque message
+        String username = LoginActivity.username; // Récupération du nom d'utilisateur actuel de la class LoginActivity
+        DocumentReference messageRef = firestoreDb.collection("messages").document(message.getId()); // Récupération de la référence du message dans Firestore
+
+        // Récupération des données du message
+        messageRef.get().addOnSuccessListener(documentSnapshot -> { // Appel de la méthode addOnSuccessListener pour gérer la réponse de Firestore
+            if (documentSnapshot.exists()) { // Vérification que le message existe
+                int currentLikes = documentSnapshot.getLong("likes") != null ? documentSnapshot.getLong("likes").intValue() : 0; // Récupération du nombre de likes actuel du message et conversion en entier
+                ArrayList<String> likedBy = (ArrayList<String>) documentSnapshot.get("likedBy"); // Récupération de la liste des personnes qui ont liké le message
+
+                if (!likedBy.contains(username)) { // Vérification que l'utilisateur actuel n'a pas déjà liké ce message
+                    currentLikes++; // Incrémentation du nombre de likes
+                    likedBy.add(username); // Ajout de l'utilisateur actuel à la liste des personnes qui ont liké le message
+
+                    // Mise à jour des données du message
+                    message.setLikes(currentLikes); // Mise à jour du nombre de likes du message
+                    double newsScore = message.getNewsScore(); // Récupération du score actuel du message
+
+                    // Mise à jour du score du message & like
+                    Map<String, Object> updates = new HashMap<>();
+                    updates.put("likes", currentLikes);
+                    updates.put("likedBy", likedBy);
+                    updates.put("newsScore", newsScore);
+
+                    int finalCurrentLikes = currentLikes; // Correction IDE concernant la MAJ du nombre de likes du message
+                    messageRef.update(updates) // Appel de la méthode update pour mettre à jour les données du message
+                            .addOnSuccessListener(aVoid -> { // Appel de la méthode addOnSuccessListener pour gérer la réponse de Firestore
+                                holder.likeCount.setText(String.valueOf(finalCurrentLikes)); // Mise à jour du nombre de likes du message dans la vue & score du message
+                                updateLikeButtonState(holder.btnLike, true); // Mettre à jour l'état du bouton en fonction de si l'utilisateur a déjà liké ce message
+                            })
+                            .addOnFailureListener(e -> { // Appel de la méthode addOnFailureListener pour gérer les erreurs
+                                Log.e("Firestore", "Error updating like", e);
+                            });
+                }
+            }
+        });
+    }
+
+    // Méthode pour afficher les messages
     @Override
-    public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
-        Message message = messages.get(position);
-        // Obtenir le username actuel à chaque affichage
-        String currentUsername = LoginActivity.username;
+    public void onBindViewHolder(@NonNull setupView holder, int position) { // Appelée pour chaque élément de la liste des messages (@NonNull setupView holder => vue de chaque message ; int position => position de chaque message)
+        Message message = messages.get(position); // Récupération du message à afficher à partir de la liste messages de la class MessageAdapter
+        String currentUsername = LoginActivity.username; // Récupération du nom d'utilisateur actuel
 
-        holder.pseudoMessage.setText(message.getPseudo());
-        holder.dateMessage.setText(message.getDate());
-        holder.textMessage.setText(message.getContent());
-        holder.likeCount.setText(String.valueOf(message.getLikes()));
+        // Affichage des informations du message
+        holder.pseudoMessage.setText(message.getPseudo()); // Affichage du pseudo du message
+        holder.dateMessage.setText(message.getDate()); // Affichage de la date du message
+        holder.textMessage.setText(message.getContent()); // Affichage du contenu du message
+        holder.likeCount.setText(String.valueOf(message.getLikes())); // Affichage du nombre de likes du message
 
-        // Initialisation de likedBy si nécessaire
-        if (message.getLikedBy() == null) {
-            message.setLikedBy(new ArrayList<>());
-        }
+        // Vérifie si l'utilisateur actuel a déjà liké ce message
+        boolean isLiked = message.getLikedBy() != null && message.getLikedBy().contains(currentUsername);
 
-        // Mettre à jour l'apparence du bouton selon si l'utilisateur a déjà liké
-        boolean hasLiked = message.getLikedBy().contains(currentUsername);
+        // Mettre à jour l'état du bouton en fonction de si l'utilisateur a déjà liké ce message
+        updateLikeButtonState(holder.btnLike, isLiked);
 
-        if(hasLiked){
-            holder.btnLike.setBackgroundColor(R.drawable.icon_nexus_heart_like);
-        }
-
-        // Ajouter le listener pour le bouton like
+        // Ajouter un listener au bouton de like
         holder.btnLike.setOnClickListener(v -> {
-            // Réobtenir le username actuel au moment du clic
-            String username = LoginActivity.username;
-            if (!message.getLikedBy().contains(username)) {
-                DocumentReference messageRef = firestoreDb.collection("messages").document(message.getId());
-
-                messageRef.get().addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        int currentLikes = documentSnapshot.getLong("likes") != null ?
-                                documentSnapshot.getLong("likes").intValue() : 0;
-                        ArrayList<String> likedBy = (ArrayList<String>) documentSnapshot.get("likedBy");
-
-                        if (likedBy == null) {
-                            likedBy = new ArrayList<>();
-                        }
-
-                        if (!likedBy.contains(username)) {
-                            currentLikes++;
-                            likedBy.add(username);
-
-                            Map<String, Object> updates = new HashMap<>();
-                            updates.put("likes", currentLikes);
-                            updates.put("likedBy", likedBy);
-
-                            int finalCurrentLikes = currentLikes;
-                            messageRef.update(updates)
-                                    .addOnSuccessListener(aVoid -> {
-                                        holder.likeCount.setText(String.valueOf(finalCurrentLikes));
-                                        holder.btnLike.setEnabled(false);
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        Log.e("Firestore", "Error updating like", e);
-                                    });
-                        }
-                    }
-                });
+            if (!isLiked) {
+                likeMessage(message, holder);
             }
         });
     }
@@ -128,20 +159,4 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         return messages.size();
     }
 
-    static class MessageViewHolder extends RecyclerView.ViewHolder {
-        TextView pseudoMessage;
-        TextView dateMessage;
-        TextView textMessage;
-        Button btnLike;
-        TextView likeCount;
-
-        MessageViewHolder(View itemView) {
-            super(itemView);
-            pseudoMessage = itemView.findViewById(R.id.pseudoMessage);
-            dateMessage = itemView.findViewById(R.id.dateMessage);
-            textMessage = itemView.findViewById(R.id.textMessage);
-            btnLike = itemView.findViewById(R.id.btnLike);
-            likeCount = itemView.findViewById(R.id.likeCount);
-        }
-    }
 }
