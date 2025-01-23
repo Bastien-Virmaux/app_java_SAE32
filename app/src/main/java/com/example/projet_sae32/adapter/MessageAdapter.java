@@ -74,11 +74,13 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.setupVie
     // Méthode pour ajouter un message à la liste
     public void addMessage(Message message) { // Message => message à ajouter
         messages.add(message); // Ajout du message à la liste messages de la class MessageAdapter
+        notifyItemInserted(messages.size() - 1);
     }
 
     // Méthode pour clear la liste des messages
     public void clearMessages() {
         messages.clear(); // Nettoyage de la liste messages de la class MessageAdapter
+        notifyDataSetChanged();
     }
 
     // Méthode pour mettre à jour l'état du bouton en fonction de si l'utilisateur a déjà liké ce message
