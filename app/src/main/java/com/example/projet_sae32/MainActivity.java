@@ -5,6 +5,7 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,12 +17,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.projet_sae32.adapter.MessageAdapter;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -33,11 +36,13 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private ListenerRegistration messagesListener;
 
-    TextView _textMessage;
-    TextView _dateMessage;
+    TextView _textMessage; //text du message
+    TextView _dateMessage; //date du message
+    TextView _likeCount; //like du message
 
-    Button _btnSend;
-    EditText _inpSend;
+    Button _btnSend; //bouton pour envoyer le message
+    EditText _inpSend; //input pour écrire le message
+    Button _btnLike; //bouton pour liker un message
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
         message.put("pseudo", mess.getPseudo());
         message.put("content", mess.getContent());
         message.put("date", mess.getDate());
+        message.put("likes", 0);  // Initialiser les likes à 0
+        message.put("likedBy", new ArrayList<String>()); // Ajouté ici
 
         db.collection("messages")
                 .add(message)
@@ -112,12 +119,16 @@ public class MainActivity extends AppCompatActivity {
                         messageAdapter.clearMessages();
                         for (DocumentSnapshot doc : value.getDocuments()) {
                             Message message = new Message(
+                                    doc.getId(), // Utilisez l'ID du document
                                     doc.getString("pseudo"),
                                     doc.getString("content"),
                                     doc.getString("date")
                             );
+                            message.setLikes(doc.getLong("likes").intValue());
+                            message.setLikedBy((ArrayList<String>) doc.get("likedBy"));
                             messageAdapter.addMessage(message);
                         }
+
                         recyclerView.scrollToPosition(messageAdapter.getItemCount() - 1);
                     }
                 });
@@ -139,6 +150,49 @@ public class MainActivity extends AppCompatActivity {
             _inpSend.setText("");
         }
     }
+
+    private void likedMessage(String messageId) {
+        DocumentReference messageRef = db.collection("messages").document(messageId);
+
+        messageRef.get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                // Récupérer les valeurs actuelles
+                int currentLikes = documentSnapshot.getLong("likes") != null ?
+                        documentSnapshot.getLong("likes").intValue() : 0;
+                ArrayList<String> likedBy = (ArrayList<String>) documentSnapshot.get("likedBy");
+
+                if (likedBy == null) {
+                    likedBy = new ArrayList<>();
+                }
+
+                // Vérifier si l'utilisateur n'a pas déjà liké
+                if (!likedBy.contains(LoginActivity.username)) {
+                    // Incrémenter le compteur de likes
+                    currentLikes++;
+                    // Ajouter l'utilisateur à la liste des personnes ayant liké
+                    likedBy.add(LoginActivity.username);
+
+                    // Mettre à jour le document
+                    Map<String, Object> updates = new HashMap<>();
+                    updates.put("likes", currentLikes);
+                    updates.put("likedBy", likedBy);
+
+                    messageRef.update(updates)
+                            .addOnSuccessListener(aVoid -> {
+                                Log.d("Firestore", "Like successfully updated");
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.e("Firestore", "Error updating like", e);
+                            });
+                }else{
+                    Log.d("Firestore", "User already liked this message");
+                    // Afficher un message indiquant que l'utilisateur a déjà liké
+                    Toast.makeText(this, "Vous avez déjà liké ce message", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
 
     @Override
     protected void onDestroy() {

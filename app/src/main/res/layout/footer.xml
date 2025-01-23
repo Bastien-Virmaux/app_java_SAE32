@@ -5,14 +5,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-        <LinearLayout
+    <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
             android:layout_margin="16dp"
             android:background="@drawable/nexus_footer_container"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:gravity="center">
+            android:gravity="center"
+            tools:ignore="MissingConstraints">
 
         <EditText
             android:id="@+id/inpSend"
@@ -21,6 +21,7 @@
             android:layout_height="wrap_content"
             android:padding="16dp"
             android:background="@drawable/nexus_footer_input"
+            android:inputType="text"
             android:hint="@string/crire_un_message"
             android:textColorHint="@color/white"
             android:textColor="@color/white"
@@ -34,8 +35,5 @@
             android:layout_marginLeft="8dp"
             android:background="@drawable/icon_nexus_send"
             />
-
-
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
