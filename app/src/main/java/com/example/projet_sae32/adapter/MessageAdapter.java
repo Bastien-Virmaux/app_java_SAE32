@@ -88,6 +88,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.setupVie
         if (isLiked) { // Si l'utilisateur a déjà liké ce message
             likeButton.setBackgroundResource(R.drawable.icon_nexus_heart_like); // Changer l'image du bouton en fonction de l'état
             likeButton.setEnabled(false); // Désactiver le bouton
+        }else{
+            likeButton.setBackgroundResource(R.drawable.icon_nexus_heart); // Changer l'image du bouton en fonction de l'état
+            likeButton.setEnabled(true); // Activer le bouton
         }
     }
 
@@ -131,7 +134,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.setupVie
     }
 
     // Méthode pour afficher les messages
-    @Override
     public void onBindViewHolder(@NonNull setupView holder, int position) { // Appelée pour chaque élément de la liste des messages (@NonNull setupView holder => vue de chaque message ; int position => position de chaque message)
         Message message = messages.get(position); // Récupération du message à afficher à partir de la liste messages de la class MessageAdapter
         String currentUsername = LoginActivity.username; // Récupération du nom d'utilisateur actuel
