@@ -36,17 +36,8 @@ public class Message {
         long currentTime = System.currentTimeMillis(); // On récupère le temps actuel en millisecondes
         long ageInDays = (currentTime - creationTimestamp) / (24 * 60 * 60 * 1000L); // On calcule l'âge du message en jours (1000L => 1 seconde)
 
-        // Si l'âge du message est supérieur à 30 jours, on met le score à 0
-        if (ageInDays > 30) {
-            this.newsScore = 0;
-            return;
-        }
-
         // Calculer le score avec la formule : ω = 30 - δ × α sachant que :δ  est l'age du message pas jour et α est le nombre de likes
-        this.newsScore = 30 - ageInDays * likes;
-
-        // On limite le score à 0 si il est négatif
-        this.newsScore = Math.max(0, this.newsScore);
+        this.newsScore = (30 - ageInDays) * likes;
     }
 
     // GETTER

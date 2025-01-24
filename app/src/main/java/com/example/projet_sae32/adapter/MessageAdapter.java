@@ -111,6 +111,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.setupVie
 
                     // Mise à jour des données du message
                     message.setLikes(currentLikes); // Mise à jour du nombre de likes du message
+                    message.calculateNewsScore(); // Calcul du score du message
                     double newsScore = message.getNewsScore(); // Récupération du score actuel du message
 
                     // Mise à jour du score du message & like
